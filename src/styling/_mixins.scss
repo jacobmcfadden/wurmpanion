@@ -1,0 +1,94 @@
+@import './variables';
+
+// EFFECTS
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -ms-transition: $args;
+  -o-transition: $args;
+  transition: $args;
+}
+
+@mixin ripple($bgColor, $borderColor, $textColor) {
+  background-position: center;
+  transition: background .8s;
+  &:hover {
+      color: darken($textColor, $amount: 50%) radial-gradient(circle, transparent 1%, lighten($textColor, 5%) 1%) center/15000%;
+      border-color: darken($borderColor, 10%) radial-gradient(circle, transparent 1%, lighten($borderColor, 5%) 1%) center/15000%;
+      background: lighten($bgColor, 5%) radial-gradient(circle, transparent 1%, lighten($bgColor, 5%) 1%) center/15000%;
+  }
+  &:active {
+    color: darken($textColor, 20%);
+    border-color: darken($borderColor, 10%);
+    background-color: lighten($bgColor, 10%);
+    background-size: 100%;
+    transition: background 0s;
+  }
+}
+
+// BACKGROUNDS
+@mixin bg-img($url, $c, $b-position, $repeat, $size, $position) {
+  background-image: url($url);
+  background-color: $c;
+  background-position: $b-position;
+  background-repeat: $repeat;
+  background-size: $size;
+  position: $position;
+}
+
+// GRID MIXINS
+@mixin create-mq($breakpoint, $min-or-max) {
+  @if($breakpoint == 0) {
+    @content;
+  } @else {
+    @media screen and (#{$min-or-max}-width: $breakpoint *1px) {
+      @content;
+    }
+  }
+}
+
+@mixin create-col-classes($modifier, $grid-cols, $breakpoint) {
+  @include create-mq($breakpoint, 'min') {
+    &__col#{$modifier}-offset-0 {
+      margin-left: 8;
+    }
+    @for $i from 1 through $grid-cols {
+      &__col#{$modifier}-#{$i} {
+        flex-basis: (100 / ($grid-cols / $i) ) * 1%;
+      }
+      &__col#{$modifier}-offset-#{$i} {
+        margin-left: (100 / ($grid-cols / $i) ) * 1%;
+      }
+    }
+  }
+}
+
+
+
+// Button MIXINS
+@mixin button($txt-trans, $border){
+  border: $border;
+  border-radius: 3rem;
+  text-align: center;
+  text-transform: $txt-trans;
+  font-family: $lato;
+  text-decoration: none;
+  outline: none;
+}
+
+@mixin btn-size($border-width, $padding, $font-size, $ltr-space, $font-weight) {
+  border-width: $border-width;
+  padding: $padding;
+  font-size: $font-size;
+  letter-spacing: $ltr-space;
+  font-weight: $font-weight;
+}
+
+@mixin btn-theme($border-color, $bg-color, $txt-color) {
+  border-color: $border-color;
+  background-color: $bg-color;
+  color: $txt-color;
+  &:hover {
+    @include ripple($bg-color, $border-color, $txt-color);
+  }
+}
